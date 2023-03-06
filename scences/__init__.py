@@ -5,12 +5,13 @@ import math
 
 from scences.self_cars.self_car_velocity.lowspeed import LowSpeed
 from scences.self_cars.self_car_relation.cutin import Cutin
+from scences.self_cars.self_car_direction.go_straight import GoStraight
 
 
 K_LOG = logging
 trans_coefficient = -1 * math.pi / 2700
 
-analyzers = [LowSpeed(), Cutin()]
+analyzers = [LowSpeed(), Cutin(), GoStraight()]
 
 class_map = {
     "Car": 1,

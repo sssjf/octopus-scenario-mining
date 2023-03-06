@@ -50,3 +50,32 @@ def find_frame_by_time(bag, time_stamp):
         if get_frame_timestamp(frame) >= time_stamp:
             return frame
         return bag[0]
+
+
+def merge_segs(segs):
+    # merge the coincide segments
+    segs = sorted(segs, key=lambda r: r["start_time"])
+    final_segs = []
+    if len(segs) > 0:
+        temp_start = segs[0]["start_time"]
+        temp_end = segs[0]["end_time"]
+        scenario_id = segs[0]["scenario_id"]
+        for i in range(1, len(segs)):
+            if segs[i]["start_time"] > temp_end:
+                final_segs.append({"scenario_id": scenario_id,
+                                   "start_time": temp_start,
+                                   "end_time": temp_end})
+                temp_end = segs[i]["end_time"]
+                temp_start = segs[i]["start_time"]
+            elif segs[i]["end_time"] > temp_end:
+                temp_end = segs[i]["end_time"]
+        final_segs.append({"scenario_id": scenario_id,
+                           "start_time": temp_start,
+                           "end_time": temp_end})
+    return final_segs
+
+
+def yaw_from_quaternions(w, x, y, z):
+    a = 2 * (w * z + x * y)
+    b = 1 - 2 * (y * y + z * z)
+    return math.atan2(a, b)
