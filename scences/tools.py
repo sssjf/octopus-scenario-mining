@@ -40,7 +40,7 @@ def is_closest_veh(frame, x, y):
                 obj["x_position"] * x > 0 and \
                 obj["y_position"] * y and \
                 abs(obj["x_position"]) < abs(x) and \
-                abs(obj["y_position"]) < ans(y):
+                abs(obj["y_position"]) < abs(y):
             return False
     return True
 
@@ -50,6 +50,13 @@ def find_frame_by_time(bag, time_stamp):
         if get_frame_timestamp(frame) >= time_stamp:
             return frame
         return bag[0]
+
+
+def cal_velocity(obj):
+    velocity = math.sqrt(
+        obj["absolute_velocity_linear_x"] ** 2 + obj["absolute_velocity_linear_y"] ** 2
+    )
+    return velocity
 
 
 def merge_segs(segs):
@@ -79,3 +86,21 @@ def yaw_from_quaternions(w, x, y, z):
     a = 2 * (w * z + x * y)
     b = 1 - 2 * (y * y + z * z)
     return math.atan2(a, b)
+
+
+def in_close_lane(y):
+    return abs(y) < 5
+
+
+def other_obj_valid(obj):
+    return obj["classification"] in vehicle_classifications and obj["x_position"] > 0
+
+
+def add_cars(obj_info):
+    size = len(obj_info)
+    cars = set()
+    for i in range(size):
+        for obj in obj_info[i]["object_list"]:
+            if other_obj_valid(obj):
+                cars.add((obj["id"], obj["classification"]))
+    return cars
