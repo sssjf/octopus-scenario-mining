@@ -15,5 +15,5 @@ class LowSpeed(SelfCarVelocity):
         return status == 0 and 0.1 < speed <= 20
 
     @staticmethod
-    def end_check(status, speed):
+    def exit_check(status, speed):
         return status == 1 and (speed > 20 or speed <= 0.1)

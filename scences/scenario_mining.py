@@ -37,7 +37,7 @@ class ScenarioMining:
         return
 
     @staticmethod
-    def window_end_check(point_list, start, end, obj_freq):
+    def window_end_check(point_list, start, obj_freq):
         # find the end frame of the same object
         window_start = start
         window_end = len(point_list) - 1
@@ -46,7 +46,7 @@ class ScenarioMining:
                 return window_start, temp
         return window_start, window_end
 
-    def refind_segs(self, segs):
+    def refine_segs(self, segs):
         # merge the coincide segments
         segs = sorted(segs, key=lambda r: r["start_time"])
         final_segs = []

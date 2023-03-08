@@ -18,6 +18,11 @@ def get_frame_timestamp(frame):
     return frame["secs"] * 1000 + frame["nsecs"] // 1000000
 
 
+def get_frame_read_time(frame):
+    time_array = time.localtime(frame["secs"])
+    return time.strftime("%Y-%m-%d %H-%M-%S", time_array)
+
+
 def scale_time(start, end, min_time, max_time, length=10000):
     if end - start < length:
         add = (length - start + end) / 2.0
@@ -59,6 +64,19 @@ def cal_velocity(obj):
     return velocity
 
 
+def cal_angle(obj):
+    velocity_x = obj["absolute_velocity_linear_x"]
+    velocity_y = obj["absolute_velocity_linear_y"]
+    if velocity_y == 0 and velocity_x == 0:
+        return 0
+    elif velocity_y == 0 and velocity_x > 0:
+        return math.pi / 2
+    elif velocity_y == 0 and velocity_x < 0:
+        return -math.pi / 2
+    else:
+        return math.atan(safe_division(velocity_x, float(velocity_y)))
+
+
 def merge_segs(segs):
     # merge the coincide segments
     segs = sorted(segs, key=lambda r: r["start_time"])
@@ -88,6 +106,11 @@ def yaw_from_quaternions(w, x, y, z):
     return math.atan2(a, b)
 
 
+def front_same_lane(obj, car):
+    return obj["id"] == car[0] and obj["classification"] == car[1] \
+        and 0 < obj["x_position"] < 60 and abs(obj["y_position"]) < 2
+
+
 def in_close_lane(y):
     return abs(y) < 5
 
@@ -104,3 +127,17 @@ def add_cars(obj_info):
             if other_obj_valid(obj):
                 cars.add((obj["id"], obj["classification"]))
     return cars
+
+
+def get_pointlist_front(obj_info, car, size):
+    # get the pointlist of the information for other cars
+    pointlist = list()
+    for i in range(size):
+        for obj in obj_info[i]["object_list"]:
+            if front_same_lane(obj, car):
+                velocity = cal_velocity(obj)
+                angle = cal_angle(obj)
+                pointlist.append(
+                    Point(obj["id"], obj["x_position"], obj["y_position"],
+                          obj["secs"], obj["nsces"], i,obj["classification"], velocity, angle))
+    return pointlist
