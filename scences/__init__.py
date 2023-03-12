@@ -10,12 +10,14 @@ from scences.self_cars.self_car_direction.go_straight import GoStraight
 from scences.others.others_relation.other_overtake import OtherOverTake
 from scences.others.others_velocity.other_acceleration import OtherAcceleration
 from scences.others.others_velocity.other_emerge_braking import OtherEmergeBraking
+from scences.classification.classification import Classification
 
 
 K_LOG = logging
 trans_coefficient = -1 * math.pi / 2700
 
-analyzers = [LowSpeed(), Cutin(), Cutout(), GoStraight(), OtherOverTake(), OtherAcceleration(), OtherEmergeBraking()]
+analyzers = [LowSpeed(), Cutin(), Cutout(), GoStraight(), OtherOverTake(), OtherAcceleration(), OtherEmergeBraking(),
+             Classification()]
 
 class_map = {
     "Car": 1,

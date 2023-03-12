@@ -100,6 +100,42 @@ def merge_segs(segs):
     return final_segs
 
 
+def join_segs(fractions, scenario_id, empty_limit=3000, length_limit=0):
+    segs = []
+    if len(fractions) > 1:
+        last_start = 0
+        last_end = 1
+        for i in range(2, len(fractions), 2):
+            if fractions[i] - fractions[last_end] < empty_limit:
+                last_end = i + 1
+            else:
+                if fractions[last_end] - fractions[last_start] > length_limit:
+                    start = fractions[last_start]
+                    end = fractions[last_end]
+                    segs.append({"scenario_id": scenario_id,
+                                 "start_time": start,
+                                 "end_time": end})
+                last_start = i
+                last_end = i + 1
+        if fractions[last_end] - fractions[last_start] > length_limit:
+            start = fractions[last_start]
+            end = fractions[last_end]
+            segs.append({"scenario_id": scenario_id,
+                         "start_time": start,
+                         "end_time": end})
+    return segs
+
+
+def scale_segs(segs, min_time, max_time):
+    res = []
+    for seg in segs:
+        (scale_start, scale_end) = scale_time(seg["start_time"], seg["end_time"], min_time, max_time)
+        res.append({"scenario_id": seg["scenario_id"],
+                    "start_time": scale_start,
+                    "end_time": scale_end})
+    return res
+
+
 def yaw_from_quaternions(w, x, y, z):
     a = 2 * (w * z + x * y)
     b = 1 - 2 * (y * y + z * z)
@@ -139,5 +175,5 @@ def get_pointlist_front(obj_info, car, size):
                 angle = cal_angle(obj)
                 pointlist.append(
                     Point(obj["id"], obj["x_position"], obj["y_position"],
-                          obj["secs"], obj["nsces"], i,obj["classification"], velocity, angle))
+                          obj["secs"], obj["nsecs"], i, obj["classification"], velocity, angle))
     return pointlist
