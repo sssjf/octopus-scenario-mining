@@ -8,6 +8,8 @@ from scences.self_cars.self_car_relation.cutin import Cutin
 from scences.self_cars.self_car_relation.cutout import Cutout
 from scences.self_cars.self_car_direction.go_straight import GoStraight
 from scences.self_cars.self_car_direction.reverse import Reverse
+from scences.self_cars.self_car_direction.turn_left import TurnLeft
+from scences.self_cars.self_car_direction.turn_right import TurnRight
 from scences.others.others_relation.other_overtake import OtherOverTake
 from scences.others.others_velocity.other_acceleration import OtherAcceleration
 from scences.others.others_velocity.other_emerge_braking import OtherEmergeBraking
@@ -18,7 +20,7 @@ K_LOG = logging
 trans_coefficient = -1 * math.pi / 2700
 
 analyzers = [LowSpeed(), Cutin(), Cutout(), GoStraight(), OtherOverTake(), OtherAcceleration(), OtherEmergeBraking(),
-             Classification(), Reverse()]
+             Classification(), Reverse(), TurnLeft(), TurnRight()]
 
 class_map = {
     "Car": 1,

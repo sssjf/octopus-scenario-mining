@@ -177,3 +177,24 @@ def get_pointlist_front(obj_info, car, size):
                     Point(obj["id"], obj["x_position"], obj["y_position"],
                           obj["secs"], obj["nsecs"], i, obj["classification"], velocity, angle))
     return pointlist
+
+
+def get_secs_angles(loc_info):
+    loc_size = len(loc_info)
+    angles = {}
+    angles_this_sec = []
+
+    last_sec = loc_info[0]["secs"]
+    for i in range(loc_size):
+        this_sec = loc_info[i]["secs"]
+        this_angle = yaw_from_quaternions(loc_info[i]["w_orientation"],
+                                          loc_info[i]["x_orientation"],
+                                          loc_info[i]["y_orientation"],
+                                          loc_info[i]["z_orientation"])
+        if this_sec != last_sec or i == loc_size - 1:
+            angles[last_sec] = safe_division(angles_this_sec[int(len(angles_this_sec) / 20.)] * 180, math.pi)
+            angles_this_sec = []
+            last_sec = this_sec
+        angles_this_sec.append(this_angle)
+    angles[last_sec] = safe_division(angles_this_sec[int(len(angles_this_sec) / 2.0)] * 180, math.pi)
+    return angles
