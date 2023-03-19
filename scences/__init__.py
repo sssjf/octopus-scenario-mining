@@ -16,13 +16,15 @@ from scences.others.others_relation.other_overtake import OtherOverTake
 from scences.others.others_velocity.other_acceleration import OtherAcceleration
 from scences.others.others_velocity.other_emerge_braking import OtherEmergeBraking
 from scences.classification.classification import Classification
+from scences.road.vertical_angle.uphill import Uphill
+from scences.road.vertical_angle.downhill import Downhill
 
 
 K_LOG = logging
 trans_coefficient = -1 * math.pi / 2700
 
 analyzers = [LowSpeed(), Cutin(), Cutout(), GoStraight(), OtherOverTake(), OtherAcceleration(), OtherEmergeBraking(),
-             Classification(), Reverse(), TurnLeft(), TurnRight(), HighSpeed(), MiddleSpeed()]
+             Classification(), Reverse(), TurnLeft(), TurnRight(), HighSpeed(), MiddleSpeed(), Uphill(), Downhill()]
 
 class_map = {
     "Car": 1,
