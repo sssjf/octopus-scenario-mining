@@ -19,6 +19,35 @@ def upload_result(objects):
             f.write(f"{segment_object.scenario_name},{segment_object.start_time},{segment_object.end_time},vehicle")
 
 
+def merge_segments(segment_results, scenario_name_1, scenario_name_2):
+    segments_1 = [segment for segment in segment_results if segment["scenario_name"] == scenario_name_1]
+    segments_2 = [segment for segment in segment_results if segment["scenario_name"] == scenario_name_2]
+    segments_1 = sorted(segments_1, key=lambda r: r["start_time"])
+    segments_2 = sorted(segments_2, key=lambda r: r["start_time"])
+    if len(segments_1) == 0 or len(segments_2) == 0:
+        return
+    new_scenario_name = scenario_name_1 + "_" + scenario_name_2
+    index = 0
+    start_time = segments_2[index]["start_time"]
+    end_time = segments_2[index]["end_time"]
+    for segment_info in segments_1:
+        if segment_info["start_time"] < start_time < segment_info["end_time"]:
+            segment_results.append({"scenario_name": new_scenario_name,
+                                    "start_time": segment_info["start_time"],
+                                    "end_time": max(segment_info["end_time"], end_time)})
+            index += 1
+            if index == len(segments_2):
+                return
+            start_time = segments_2[index]["start_time"]
+            end_time = segments_2[index]["end_time"]
+        elif segment_info["start_time"] > start_time:
+            index += 1
+            if index == len(segments_2):
+                return
+            start_time = segments_2[index]["start_time"]
+            end_time = segments_2[index]["end_time"]
+
+
 def run_main():
     bag = rosbag.Bag(os.getenv("rosbag_path"), "r")
     topics = bag.get_type_and_topic_info()
